@@ -22,6 +22,7 @@ instance Expr Eval where
     and (E b) (E c) = E (b && c)
     or (E b) (E c)  = E (b || c)
 
+fromEval (E x) = x
 
 tests :: IO Counts
 tests = do runTestTT allTests
@@ -42,60 +43,45 @@ allTests = test [
 
 
 testValSavesInput = test [
-    (val 3) ~=? 3    
+    fromEval (val 3) ~=? 3    
     ]
 
 testSameValuesAreEqual = test [
-    (eq (val 3) (val 3)) ~=? True
+    fromEval (eq (val 3) (val 3)) ~=? True
     ]
 
 testDifferentValuesAreNotEqual = test [
-    (eq (val 3) (val 4)) ~=? False
+    fromEval (eq (val 3) (val 4)) ~=? False
     ]
 
 test3IsLowerThan4 = test [
-    (lt (val 3) (val 4)) ~=? True
+    fromEval (lt (val 3) (val 4)) ~=? True
     ]
 
 test5IsNotLowerThan4 = test [
-    (lt (val 5) (val 4)) ~=? False
+    fromEval (lt (val 5) (val 4)) ~=? False
     ]
 
 testNot3IsLowerThan4ReturnsFalse = test [
-    (not (lt (val 3) (val 4))) ~=? False
+    fromEval (not (lt (val 3) (val 4))) ~=? False
     ]
 
 testNot5IsLowerThan4ReturnsTrue = test [
-    (not (lt (val 5) (val 4))) ~=? True
+    fromEval (not (lt (val 5) (val 4))) ~=? True
     ]
 
 testAndTrueFalseReturnsFalse = test [
-    (and (lt (val 3) (val 4)) (lt (val 5) (val 4))) ~=? False
+    fromEval (and (lt (val 3) (val 4)) (lt (val 5) (val 4))) ~=? False
     ]
 
 testAndTrueTrueReturnsTrue = test [
-    (and (lt (val 3) (val 4)) (lt (val 2) (val 4))) ~=? True
+    fromEval (and (lt (val 3) (val 4)) (lt (val 2) (val 4))) ~=? True
     ]
 
 testOrTrueFalseReturnsTrue = test [
-    (or (lt (val 3) (val 4)) (lt (val 5) (val 4))) ~=? True
+    fromEval (or (lt (val 3) (val 4)) (lt (val 5) (val 4))) ~=? True
     ]
 
 testOrFalseFalseReturnsFalse = test [
-    (or (lt (val 7) (val 4)) (lt (val 4) (val 4))) ~=? False
+    fromEval (or (lt (val 7) (val 4)) (lt (val 4) (val 4))) ~=? False
     ]
-
--- class TExpr e where
---     valT :: Int -> e Int
---     addT ::e Int ->e Int ->e Int 
---     isZeroT :: e Int -> e Bool
---     ifT :: e Bool -> e t -> e t -> e t
-
--- data TEval t = TE t
---    deriving Show
-   
--- instance TExpr TEval where
---     valT x = TE x
---     addT (TE x)(TE y)=TE (x+y)
---     isZeroT (TE x) = TE (x == 0)
---     ifT (TE c)(TE x)(TE y)=TE (if c then x else y)
