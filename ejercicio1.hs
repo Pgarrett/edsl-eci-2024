@@ -1,3 +1,8 @@
+import Test.HUnit
+
+import qualified Prelude (not)
+import Prelude hiding (not, and, or)
+
 class Expr e where
     val    :: Int -> e Int
     eq     :: e Int -> e Int -> e Bool
@@ -7,6 +12,7 @@ class Expr e where
     or     :: e Bool -> e Bool -> e Bool
 
 data Eval t = E t
+    deriving Show
 
 instance Expr Eval where
     val x           = E x
@@ -16,12 +22,31 @@ instance Expr Eval where
     and (E b) (E c) = E (b && c)
     or (E b) (E c)  = E (b || c)
 
+-- tests :: IO Counts
+-- tests = do runTestTT allTests
 
--- case (val 4) of E result -> print result
--- case (eq (val 3) (val 4)) of E result -> print result
--- case (eq (val 4) (val 4)) of E result -> print result
--- case (lt (val 3) (val 4)) of E result -> print result
--- case (lt (val 5) (val 4)) of E result -> print result
--- case (not (lt (val 3) (val 4))) of E result -> print result
--- case (and (lt (val 3) (val 4)) (lt (val 5) (val 0)) ) of E result -> print result
--- case (or (lt (val 3) (val 4)) (lt (val 5) (val 0)) ) of E result -> print result
+-- allTests = test [
+--     "testValSavesInput" ~: testValSavesInput    
+--     ]
+
+-- v3 :: Eval Int
+-- v3 = val 3
+
+-- testValSavesInput = test [
+--     v3 ~=? 3
+--     ]
+
+
+-- tests :: IO Counts
+-- tests = do runTestTT allTests
+
+-- allTests = test [
+--   "ejercicio1" ~: testsEj1,
+--   "ejercicio2" ~: testsEj2,
+--   "ejercicio3" ~: testsEj3,
+--   "ejercicio4" ~: testsEj4,
+--   "ejercicio5" ~: testsEj5,
+--   "ejercicio6" ~: testsEj6,
+--   "auxiliar-apareceIgualCantidadDeVeces" ~: testsApareceIgualCantidadDeVeces,
+--   "auxiliar-contarOcurrenciasTupla" ~: testsContarOcurrenciasTupla
+--   ]
