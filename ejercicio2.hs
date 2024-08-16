@@ -29,18 +29,15 @@ allTests = test [
     "test3IsLowerThan4" ~: test3IsLowerThan4,
     "test5IsNotLowerThan4" ~: test5IsNotLowerThan4,
     "testNot3IsLowerThan4ReturnsFalse" ~: testNot3IsLowerThan4ReturnsFalse,
-    "testNot5IsLowerThan4ReturnsTrue" ~: testNot5IsLowerThan4ReturnsTrue
+    "testNot5IsLowerThan4ReturnsTrue" ~: testNot5IsLowerThan4ReturnsTrue,
+    "testAndTrueFalseReturnsFalse" ~: testAndTrueFalseReturnsFalse,
+    "testAndTrueTrueReturnsTrue" ~: testAndTrueTrueReturnsTrue,
+    "testOrTrueFalseReturnsTrue" ~: testOrTrueFalseReturnsTrue,
+    "testOrFalseFalseReturnsFalse" ~: testOrFalseFalseReturnsFalse
     ]
 
 testValSavesInput = test [
     eval (Val 3) ~=? 3    
-    
-    -- eval (And (Lt (Val 3) (Val 4)) (Lt (Val 5) (Val 4))) ~=? False
-    -- eval (And (Lt (Val 3) (Val 4)) (Lt (Val 2) (Val 4))) ~=? True
-    
-    -- eval (Or (Lt (Val 3) (Val 4)) (Lt (Val 5) (Val 4))) ~=? True
-    -- eval (Or (Lt (Val 7) (Val 4)) (Lt (Val 4) (Val 4))) ~=? False
-
     ]
 
 testSameValuesAreEqual = test [
@@ -65,4 +62,20 @@ testNot3IsLowerThan4ReturnsFalse = test [
 
 testNot5IsLowerThan4ReturnsTrue = test [
     eval (Not (Lt (Val 5) (Val 4))) ~=? True
+    ]
+
+testAndTrueFalseReturnsFalse = test [
+    eval (And (Lt (Val 3) (Val 4)) (Lt (Val 5) (Val 4))) ~=? False
+    ]
+
+testAndTrueTrueReturnsTrue = test [
+    eval (And (Lt (Val 3) (Val 4)) (Lt (Val 2) (Val 4))) ~=? True
+    ]
+
+testOrTrueFalseReturnsTrue = test [
+    eval (Or (Lt (Val 3) (Val 4)) (Lt (Val 5) (Val 4))) ~=? True
+    ]
+
+testOrFalseFalseReturnsFalse = test [
+    eval (Or (Lt (Val 7) (Val 4)) (Lt (Val 4) (Val 4))) ~=? False
     ]
