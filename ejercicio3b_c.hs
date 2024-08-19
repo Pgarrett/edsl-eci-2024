@@ -186,5 +186,7 @@ testPOrIsParsed = test [
     pProp "(3)" ~=? [(Val 3, "")],
     pProp "(3<4)" ~=? [(Lt (Val 3) (Val 4), "")],
     pProp "(3=4)" ~=? [(Eq (Val 3) (Val 4), "")],
-    pProp "~(((5=5)\\/~(2<1))/\\((3<4)\\/(7=7)))" ~=? [(Not (And (Or (Eq (Val 5) (Val 5)) (Not (Lt (Val 2) (Val 1)))) (Or (Lt (Val 3) (Val 4)) (Eq (Val 7) (Val 7)))),"")]
+    pProp "~(((5=5)\\/~(2<1))/\\((3<4)\\/(7=7)))" ~=? [(Not (And (Or (Eq (Val 5) (Val 5)) (Not (Lt (Val 2) (Val 1)))) (Or (Lt (Val 3) (Val 4)) (Eq (Val 7) (Val 7)))),"")],
+    pProp "(~(4<3))\\/(4=3)" ~=? [(Or (Not (Lt (Val 4) (Val 3))) (Eq (Val 4) (Val 3)),"")],
+    pProp "(~(4<3))\\/(4=3)asdf" ~=? [(Or (Not (Lt (Val 4) (Val 3))) (Eq (Val 4) (Val 3)),"asdf")]
     ]
