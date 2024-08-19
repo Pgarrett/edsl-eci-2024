@@ -71,13 +71,17 @@ pList p =  (:) <$> p <*> pList p
 
 -- Implementacion. El parser no soporta espacios.
 -- gramatica:
--- prop ::= tem "\/" prop | term
+-- prop ::= term "\/" prop | term
 -- term ::= factor "/\" term | factor
 -- factor ::= '~' prop | '(' prop ')' | '(' prop '=' prop ')' | '(' prop '<' prop ')' | N
 
 -- Parser para números naturales (N)
 pVal :: Parser Char UProp
-pVal = Val . read <$> pList (pSat isDigit)
+-- pVal = Val . read <$> pList (pSat isDigit)
+pVal = \input -> case reads input of
+    [(n, rest)] -> [(Val n, rest)]
+    _           -> []
+
 
 -- Parser para not (~p)
 pNot :: Parser Char UProp
@@ -130,7 +134,8 @@ allTests = test [
     "test3Eq4IsParsed" ~: test3Eq4IsParsed,
     "testPFactorIsParsed" ~: testPFactorIsParsed,
     "testPAndIsParsed" ~: testPAndIsParsed,
-    "testPOrIsParsed" ~: testPOrIsParsed
+    "testPOrIsParsed" ~: testPOrIsParsed,
+    "testInvalidSyntaxIsNotParsed" ~: testInvalidSyntaxIsNotParsed
     ]
 
 testNumbersAreParsedInVal = test [
@@ -177,11 +182,13 @@ testPAndIsParsed = test [
     ]
 
 testPOrIsParsed = test [
+    pProp "1/\\" ~=? [(Val 1,"/\\")],
     pProp "3/\\4" ~=? [(And (Val 3) (Val 4),"")],
     pProp "3\\/4" ~=? [(Or (Val 3) (Val 4),"")],
     pProp "~(3\\/4)" ~=? [(Not (Or (Val 3) (Val 4)),"")],
     pProp "(3<4)\\/(3=4)" ~=? [(Or (Lt (Val 3) (Val 4)) (Eq (Val 3) (Val 4)),"")],
     pProp "3" ~=? [(Val 3, "")],
+    pProp "2~" ~=? [(Val 2, "~")],
     pProp "~3" ~=? [(Not (Val 3), "")],
     pProp "(3)" ~=? [(Val 3, "")],
     pProp "(3<4)" ~=? [(Lt (Val 3) (Val 4), "")],
@@ -189,4 +196,11 @@ testPOrIsParsed = test [
     pProp "~(((5=5)\\/~(2<1))/\\((3<4)\\/(7=7)))" ~=? [(Not (And (Or (Eq (Val 5) (Val 5)) (Not (Lt (Val 2) (Val 1)))) (Or (Lt (Val 3) (Val 4)) (Eq (Val 7) (Val 7)))),"")],
     pProp "(~(4<3))\\/(4=3)" ~=? [(Or (Not (Lt (Val 4) (Val 3))) (Eq (Val 4) (Val 3)),"")],
     pProp "(~(4<3))\\/(4=3)asdf" ~=? [(Or (Not (Lt (Val 4) (Val 3))) (Eq (Val 4) (Val 3)),"asdf")]
+    ]
+
+testInvalidSyntaxIsNotParsed = test [
+    pProp "/\\/\\" ~=? [],
+    pProp "/\\\\/" ~=? [],
+    pProp "/\\2" ~=? [],
+    pProp "/\\~" ~=? []
     ]
